@@ -1,0 +1,21 @@
+#bar {
+		top:10em;
+		height:200px;
+		width:2px;
+		background-color:#fbb;
+		position:absolute;
+}
+
+.instrument {
+		clear:both;
+}
+
+.instrument-name {
+		width:6em;
+		float:left;
+}
+
+.instrument-note {
+		font-weight:bold;
+		float:left;
+}

@@ -1,0 +1,196 @@
+this.btc = {}
+btc = this.btc
+
+instrument_sounds = {}
+
+# Play given instrument.
+#
+# Caches audio elements.
+playSound = (instrument) ->
+  if not instrument_sounds[instrument]?
+    audio = document.createElement("audio")
+    source = document.createElement("source")
+    prefix = 'sounds/' + instrument
+    if audio.canPlayType('audio/mpeg;')
+      source.type = 'audio/mpeg'
+      source.src = prefix + '.mp3'
+    else
+      source.type= 'audio/ogg'
+      source.src = prefix + '.ogg'
+    audio.appendChild(source)
+    instrument_sounds[instrument] = audio
+  sound = instrument_sounds[instrument]
+  if !sound.paused
+    sound.pause()
+    sound.currentTime = 0.0
+  sound.play()
+
+# Represents a break in a tune.
+class Break
+  constructor: (data) ->
+    @name = data.name
+    @length = data.length
+    @instruments = data.instruments
+  # Get notes to play for given instrument.
+  get_instrument: (name) ->
+    notes = []
+    for voice, times of @instruments[name]
+      for time in times
+        notes.push({'voice': voice, 'time': time })
+    notes.sort((left, right) -> left.time - right.time)
+
+# Represents a tune.
+class Tune
+  constructor: (data) ->
+    @name = data.name
+    @bars = data.bars
+    @measure = data.measure
+    @length = data.length
+    @breaks = {}
+    for key, val of data.breaks
+      break_ = new Break(data.breaks[key])
+      @breaks[break_.name] = break_
+
+# Represents one instrument in a break.
+class Instrument
+  constructor: (@name) ->
+    @notes = []
+
+  play_break: (thabreak) ->
+    @notes = thabreak.get_instrument(@name)
+
+  peek: ->
+    if @notes.length then @notes[0] else undefined
+
+  pop: ->
+    if @notes.length then @notes.shift() else undefined
+
+  remaining: ->
+    @notes
+
+# Handles playing of a tune.
+class Player
+  constructor: ->
+    @tunes = [funk, afoxe]
+    for tune in @tunes
+      $('#tune')
+          .append($('<option>', { value : tune.name })
+          .text(tune.name));
+    $('#tune').change(=> @change_tune($('#tune').val()))
+
+    @change_tune("Funk")
+    @change_break("Groove")
+
+    @bpm = 120
+    @step = 20
+
+    @running = false
+    date = new Date()
+    @ticks = 0
+    @last_ticks = date.getTime()
+
+    startstop = =>
+      @toggle_running()
+      if @running
+        $("#start").hide()
+        $("#stop").show()
+      else
+        $("#start").show()
+        $("#stop").hide()
+
+    $("#start").click(startstop)
+    $("#stop").click(startstop)
+    $("#stop").hide()
+    $("#bpm").val(@bpm)
+    $("#bpm").change(=> @bpm = $("#bpm").val())
+
+    @_next_run()
+
+  change_tune: (tune_name) ->
+    for tune in @tunes
+      if tune.name == tune_name
+        @tune = new Tune(tune)
+        break
+    @instruments = {}
+    @instrument_list = ['surdo', 'agogo', 'tamborim','repinique']
+    for instrument in @instrument_list
+      @instruments[instrument] = new Instrument(instrument)
+
+    $('#break').children().remove()
+    for key, value of @tune.breaks
+      $('#break')
+          .append($('<option>', { value : key })
+          .text(key));
+    $('#break').change(=> @change_break($('#break').val()))
+
+    @_next_run()
+
+  change_break: (thabreak_name) ->
+    @break = thabreak_name
+    @_next_run()
+
+  _draw_notes: ->
+    $("#instrument").hide()
+    $(".instrument:visible").empty()
+    $(".instrument:visible").remove()
+    for name, instrument of @instruments
+      clone = $("#instrument").clone()
+      $(clone).children('.instrument-name').html(instrument.name)
+      clone.attr('id', "instrument_#{instrument.name}")
+      $(clone).show()
+      $("#instrument").after(clone)
+
+      last_time = 0
+      note_width = 2
+      for note in instrument.remaining()
+        note_node = $('<div></div>').addClass('instrument-note').text('o').attr('id', "instrument_#{instrument.name}_note_#{note.voice}_#{note.time}").css('margin-left', (note.time - last_time - (if last_time > 0 then note_width else 0))+'em').css('width', note_width + 'em')
+        last_time = note.time
+        $(clone).children('.instrument-notes').append(note_node)
+
+  toggle_running: ->
+    @running = not @running
+    @loop() if @running
+
+  loop: ->
+    if @running
+      setTimeout((=> @loop()), @step)
+    @_looping()
+
+  _next_run: ->
+    if not (@tune and @break)
+      return
+    @time = 1
+    @last_time = 0
+    for instrument in @instrument_list
+      @instruments[instrument].play_break(@tune.breaks[@break])
+    @_draw_notes()
+
+  _looping: ->
+    date = new Date()
+    @ticks = date.getTime()
+    tick_diff = @ticks - @last_ticks
+    @last_ticks = @ticks
+    @time += tick_diff / 1000.0 * @bpm/60.0 * @tune.measure
+
+    $('#bar').css('margin-left', @time + 6.5 + 'em')
+
+    if Math.floor(@time) > Math.floor(@last_time)
+      @last_time = @time
+
+    length = @tune.breaks[@break].length or @tune.length
+    if @time >= @tune.measure * @tune.bars * length + 1
+      @_next_run()
+
+    for name, instrument of @instruments
+      if instrument.peek() and @time >= instrument.peek().time
+        peek = instrument.peek()
+        $("#instrument_#{instrument.name}_note_#{peek.voice}_#{peek.time}").css('color', 'red')
+        playSound("#{instrument.name}_#{peek.voice}")
+        instrument.pop()
+
+
+
+$(document).ready(->
+  player = new Player()
+)
+

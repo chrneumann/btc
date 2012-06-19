@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Break the Chain!</title>
+		<script src="ext/jquery.js"></script>
+		<script src="tunes/afoxe.js"></script>
+		<script src="tunes/funk.js"></script>
+		<script src="lib/btc.js"></script>
+    <link href="ext/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="btc.css" rel="stylesheet">
+		<script src="ext/bootstrap/js/bootstrap.js"></script>
+	</head>
+	<body>
+    <div class="navbar">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="brand" href="#">
+						Break the Chain!
+					</a>
+<!--
+					<ul class="nav">
+						<li class="active">
+							<a href="#">Home</a>
+						</li>
+						<li><a href="#">Link</a></li>
+						<li><a href="#">Link</a></li>
+					</ul>-->
+				</div>
+			</div>
+    </div>
+		<div class="container">
+			<div class="row">
+				<div class="span12">
+					Tune: <select id="tune" name="tune"></select>
+					Break: <select id="break" name="break"></select>
+					Speed (bpm): <input id="bpm" name="bpm" type="number" min="20" max ="200" step="10"/><br/>
+					<button id="start"><i class="icon-play"></i> Start</button>
+					<button id="stop"><i class="icon-stop"></i> Stop</button>
+					<button id="pause"><i class="icon-pause"></i> Pause</button><br/><br/>
+
+					<div id="count"></div>
+					<div id="play"></div>
+					<div id="instruments">
+						<div id="bar"></div>
+						<div id="instrument" class="instrument">
+							<div class="instrument-name">Surdo</div>
+							<div class="instrument-notes">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+    <div class="container" style="margin-top:10em;">
+      <p>
+        <strong>Break the Chain</strong> is a web player for samba
+        tunes of
+        the <a href="http://www.rhythms-of-resistance.org/">Rhythms of
+        Resistance</a> network. It's still under development and may
+        crash your browser, eat your cat, or start a
+        revolution.
+      </p>
+      <h2>Changes</h2>
+      <ul>
+        <li>2012/06/19: Published.</li>
+      </ul>
+      <h2>Problems?</h2>
+      <p>
+        <streak>Break the Chain</streak> will possibly not work for
+        your browser or your operating system. In this case, you will
+        hear no instruments at all or hear them very choppy /
+        unrhythmic. This is due to the fact that <streak>Break the
+        Chain</streak> uses modern techniques that are not yet well
+        supported by most browsers. But it seems to work rather good
+        on Google's web browser Chrome. Always use the latest update
+        of your browser!
+      </p>
+      <h2>Supported browsers</h2>
+      <ul>
+        <li>Google Chrome 18 (on Linux, maybe also on other operating systems like Windows or MacOS)</li>
+      </ul>
+      <p>Does it work for your browser which is not listed here? Contact me!</p>
+      <h2>Contact</h2>
+      <p>
+        Christian (RoR Frankfurt), <a href="mailto:cneumann@datenkarussell.de">cneumann@datenkarussell.de</a>
+      </p>
+    </div>
+	</body>
+</html>
