@@ -56,6 +56,7 @@ class Break
   constructor: (data) ->
     @name = data.name
     @length = data.length
+    @solo = data.solo
     @instruments = []
     for name, voices of data.instruments
       @instruments.push(new Instrument(name, voices))
@@ -221,13 +222,18 @@ class Player
     if @time >= @tune.measure * @tune.bars * length + 1
       @restart()
 
-    for instrument in @break.get_instruments()
+     for instrument in @break.get_instruments()
       if instrument.peek() and @time >= instrument.peek().time
         peek = instrument.peek()
         $("#instrument_#{instrument.name}_note_#{peek.voice}_#{peek.time}").css('color', 'red')
         if instrument.name == 'everyone'
           for i in @tune.get_all_instruments()
+            if not (i.name in ['shaker'])
               playSound("#{i.name}_beat")
+        else if instrument.name == 'others'
+          for i in @tune.get_all_instruments()
+              if not (i.name in [@break.solo, 'shaker'])
+                playSound("#{i.name}_beat")
         else
           playSound("#{instrument.name}_#{peek.voice}")
         instrument.pop()
