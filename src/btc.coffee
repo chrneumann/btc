@@ -161,17 +161,19 @@ class Player
     @restart
 
   _draw_notes: ->
-    $("#instrument").hide()
-    $(".instrument:visible").empty()
-    $(".instrument:visible").remove()
+    root = $("#instruments")
+    base = root.children("#instrument")
+    base.hide()
+    root.children(".instrument:visible").empty().remove()
     for instrument in @break.get_instruments()
-      clone = $("#instrument").clone()
+      clone = base.clone()
       $(clone).children('.instrument-name').html(instrument.title)
       clone.attr('id', "instrument_#{instrument.name}")
       $(clone).show()
       $("#instrument").after(clone)
       last_time = 0
       note_width = 2
+      notes = $(clone).children('.instrument-notes')
       for note in instrument.get_notes()
         symbols = {
           beat: 'x',
@@ -182,9 +184,9 @@ class Player
           symbol = symbols[note.voice]
         else
           symbol = note.voice.substr(0,1)
-        note_node = $('<div></div>').addClass('instrument-note').text(symbol).attr('id', "instrument_#{instrument.name}_note_#{note.voice}_#{note.time}").css('margin-left', (note.time - last_time - (if last_time > 0 then note_width else 0))+'em').css('width', note_width + 'em')
+        note_node = $('<div class="instrument-note" style="margin-left:' + (note.time - last_time - (if last_time > 0 then note_width else 0))+'em; width:'+ note_width + 'em' + '" id=' + "instrument_#{instrument.name}_note_#{note.voice}_#{note.time}" + '>' + symbol + '</div>')
         last_time = note.time
-        $(clone).children('.instrument-notes').append(note_node)
+        notes.append(note_node)
 
   toggle_running: ->
     @running = not @running
@@ -193,20 +195,17 @@ class Player
   loop: ->
     if @running
       setTimeout((=> @loop()), @step)
-    @_looping()
+    @_tick()
 
-  _next_run: ->
+  _restart_init: ->
+    for instrument in @break.get_instruments()
+      instrument.reset()
+    @time = 1
+    @last_time = 0
+    @_restart = false
+    @_draw_notes()
 
-
-  _looping: ->
-    if @_restart
-      for instrument in @break.get_instruments()
-        instrument.reset()
-      @time = 1
-      @last_time = 0
-      @_draw_notes()
-      @_restart = false
-
+  _tick: ->
     date = new Date()
     @ticks = date.getTime()
     tick_diff = @ticks - @last_ticks
@@ -233,6 +232,8 @@ class Player
           playSound("#{instrument.name}_#{peek.voice}")
         instrument.pop()
 
+    if @_restart
+      @_restart_init()
 
 $(document).ready(->
   player = new Player()
