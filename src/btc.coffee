@@ -1,29 +1,40 @@
 this.btc = {}
 btc = this.btc
 
+use_flash = true
+
+sm_sounds = {}
+
+soundManager.url = 'ext/soundmanager/swf/';
+soundManager.debugFlash = false
+soundManager.useHighPerformance = true
+soundManager.useFastPolling = true
+soundManager.debugMode = false
+if use_flash
+  soundManager_preferFlash = true
+  soundManager.useHTML5Audio = false
+else
+  soundManager.preferFlash = false
+  soundManager.useHTML5Audio = true
+#soundManager.flashPollingInterval = 5
+#soundManager.html5PollingInterval = 100
+#soundManager.waitForWindowLoad = false
 
 # Play given instrument.
 #
 # Caches audio elements.
-instrument_sounds = {}
 playSound = (instrument) ->
-  if not instrument_sounds[instrument]?
-    audio = document.createElement("audio")
-    source = document.createElement("source")
-    prefix = 'sounds/' + instrument
-    if audio.canPlayType('audio/mpeg;')
-      source.type = 'audio/mpeg'
-      source.src = prefix + '.mp3'
-    else
-      source.type= 'audio/ogg'
-      source.src = prefix + '.ogg'
-    audio.appendChild(source)
-    instrument_sounds[instrument] = audio
-  sound = instrument_sounds[instrument]
-  if !sound.paused
-    sound.pause()
-    sound.currentTime = 0.0
-  sound.play()
+  if not sm_sounds[instrument]?
+#    pan = Math.floor(Math.random() * 200 - 100)
+    sm_sounds[instrument] = soundManager.createSound({
+      id: 'sound_' + instrument,
+      url: ['sounds/' + instrument + '.ogg', 'sounds/' + instrument + '.mp3', 'sounds/' + instrument + '.wav'],
+      autoLoad: true,
+      autoPlay: false,
+      volume: 50,
+#      pan: pan,
+    })
+  sm_sounds[instrument].play()
 
 
 # Represents a tune.
