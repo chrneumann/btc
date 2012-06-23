@@ -1,7 +1,7 @@
 this.btc = {}
 btc = this.btc
 
-use_flash = true
+use_flash = false
 
 sm_sounds = {}
 
@@ -128,22 +128,21 @@ class Player
     @step = 20
 
     @running = false
-    date = new Date()
     @ticks = 0
-    @last_ticks = date.getTime()
 
     startstop = =>
       @toggle_running()
       if @running
         $("#start").hide()
-        $("#stop").show()
+        $("#pause").show()
       else
         $("#start").show()
-        $("#stop").hide()
+        $("#pause").hide()
 
     $("#start").click(startstop)
-    $("#stop").click(startstop)
-    $("#stop").hide()
+    $("#pause").click(startstop)
+    $("#restart").click(=> @restart())
+    $("#pause").hide()
     $("#bpm").val(@bpm)
     $("#bpm").change(=> @bpm = $("#bpm").val())
 
@@ -170,7 +169,7 @@ class Player
   change_break: (thabreak_name) ->
     @break = @tune.get_break(thabreak_name)
     @_draw_notes()
-    @restart
+    @restart()
 
   _draw_notes: ->
     root = $("#instruments")
@@ -201,6 +200,8 @@ class Player
         notes.append(note_node)
 
   toggle_running: ->
+    date = new Date()
+    @last_ticks = date.getTime()
     @running = not @running
     @loop() if @running
 
