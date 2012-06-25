@@ -3,10 +3,8 @@
   <head>
     <meta charset="utf-8">
     <title>Break the Chain!</title>
+		<script src="ext/js-yaml.min.js"></script>
     <script src="ext/jquery.js"></script>
-    <script src="tunes/afoxe.js"></script>
-    <script src="tunes/custard.js"></script>
-    <script src="tunes/funk.js"></script>
     <script src="ext/soundmanager/script/soundmanager2-nodebug.js"></script>
     <script src="lib/btc.js"></script>
     <link href="ext/bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -38,8 +36,8 @@
           Break: <select id="break" name="break"></select>
           Speed (bpm): <input id="bpm" name="bpm" type="number" min="20" max ="200" step="10"/><br/>
           <button id="start"><i class="icon-play"></i> Start</button>
-          <button id="stop"><i class="icon-stop"></i> Stop</button>
-          <button id="pause"><i class="icon-pause"></i> Pause</button><br/><br/>
+          <button id="pause"><i class="icon-pause"></i> Pause</button>
+          <button id="restart"><i class="icon-fast-backward"></i> Restart</button><br/><br/>
 
           <div id="count"></div>
           <div id="play"></div>
