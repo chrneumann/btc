@@ -189,7 +189,7 @@ custard =
     }]
 
 
-use_flash = false
+use_flash = document.location.search.indexOf('use-flash') > -1
 
 sm_sounds = {}
 
@@ -449,4 +449,9 @@ class Player
 
 $(document).ready(->
   player = new Player()
+  ischrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1
+  if ischrome
+    $('#nochrome').hide()
+  if not use_flash
+    $('#use-flash').hide()
 )
