@@ -63,7 +63,7 @@ afoxe =
       instruments:
         surdo_low:
           beat: [25, 29]
-          silent: [1, 5, 9, 13, 17, 21]
+          dampened: [1, 5, 9, 13, 17, 21]
         surdo_mid:
           dampened: [1, 9, 17]
           beat: [7, 15, 23, 25, 27, 29, 31]
@@ -74,7 +74,7 @@ afoxe =
           rim: [7, 15, 23, 27, 31]
           flare: [1, 9, 17]
           hand: [4, 12, 20]
-          silent: [5, 13, 21, 25, 29]
+          beat: [5, 13, 21, 25, 29]
         snare:
           beat: [1, 5, 8, 9, 12, 17, 21, 24, 25, 28]
           shadow: [2, 3, 4, 6, 7, 10, 11, 13, 14, 15, 16, 18, 19, 20, 22,
@@ -128,7 +128,7 @@ custard =
         surdo_high:
           beat: [1, 3, 9, 10, 12]
           dampened: [5, 13]
-        repenique:
+        repinique:
           beat: [3, 4, 7, 8, 11, 12, 15, 16]
         snare:
           beat: [1, 3, 5, 8, 10, 13]
@@ -428,7 +428,7 @@ class Player
     if @time >= @tune.measure * @tune.bars * length + 1
       @restart()
 
-     for instrument in @break.get_instruments()
+    for instrument in @break.get_instruments()
       if instrument.peek() and @time >= instrument.peek().time
         peek = instrument.peek()
         $("#instrument_#{instrument.name}_note_#{peek.voice}_#{peek.time}").css('color', 'red')
